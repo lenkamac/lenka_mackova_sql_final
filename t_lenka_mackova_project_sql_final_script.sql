@@ -22,17 +22,17 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 		FROM covid19_basic_differences cbd 
 		LEFT JOIN lookup_table lt
 			ON cbd.country = lt.country 
-			AND lt.province is null
+			AND lt.province IS NULL
 		WHERE cbd.`date` BETWEEN '2020-03-01' AND '2020-11-01'
 		ORDER BY cbd.date, cbd.country
 	),
 	cov_tests AS (
 		-- select z tabulky covid19-tests
 			SELECT  
-				CAST(ct2.date as date) as datum,
-				ct2.country as all_country,
-				ct2.tests_performed as tests_perform,
-				ct2.ISO as iso
+				CAST(ct2.date AS date) AS datum,
+				ct2.country AS all_country,
+				ct2.tests_performed AS tests_perform,
+				ct2.ISO AS iso
 			FROM (
 				SELECT
 					CASE WHEN country = 'Czech Republic' THEN 'Czechia'
@@ -157,7 +157,7 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 			  	r.year, 
 			 	sum(r.population) AS total_population_2020
 			 FROM religions r 
-			 WHERE r.year = 2020 and r.country != 'All Countries'
+			 WHERE r.year = 2020 AND r.country != 'All Countries'
 			 GROUP BY r.country
 			) r2
 		ON r3.country = r2.country
@@ -169,11 +169,11 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 		SELECT 
 			avg_col.datum,
 			avg_col.city,
-			AVG(avg_col.day_temp) as avg_day_temperatur 
+			AVG(avg_col.day_temp) AS avg_day_temperatur 
 		FROM (
 			SELECT 
-				CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) as date ) AS datum,
-				CAST(wi.city as varchar(255)) AS city,
+				CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) AS date ) AS datum,
+				CAST(wi.city AS varchar(255)) AS city,
 				CAST(REGEXP_REPLACE(wi.temp ,'[^0-9]','')as float) AS day_temp,
 				TIME(wi.`time`) AS hours
 			FROM (
@@ -189,7 +189,7 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 				FROM weather w 
 				WHERE w.time BETWEEN '06:00:00' AND '18:00:00'
 					AND w.date BETWEEN '2020-03-01' AND '2020-11-01'
-					AND city is not NULL 
+					AND city IS NOT NULL 
 				) AS wi
 			)AS avg_col
 		GROUP BY avg_col.datum, avg_col.city
@@ -203,9 +203,9 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 			MAX(max_wind.wind_day )AS max_day_wind 
 		FROM (
 			SELECT
-				CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) as date ) AS datum,
-				CAST(wi.city as varchar(255)) AS city,
-				CAST(REGEXP_REPLACE(wi.wind,'[^0-9]','')as float) AS wind_day
+				CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) AS date ) AS datum,
+				CAST(wi.city AS varchar(255)) AS city,
+				CAST(REGEXP_REPLACE(wi.wind,'[^0-9]','') AS float) AS wind_day
 			FROM (
 				SELECT
 					CASE WHEN city = 'Prague' THEN 'Praha'
@@ -238,8 +238,8 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 				END AS hours_rain
 			FROM (
 				SELECT
-					CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) as date ) AS datum,
-					CAST(wi.city as varchar(255)) AS city,
+					CAST(RTRIM(REPLACE(wi.date, '00:00:00', '')) AS date ) AS datum,
+					CAST(wi.city AS varchar(255)) AS city,
 					CAST(RTRIM(REPLACE (wi.rain, 'mm', '')) AS float) AS rain_day,
 					TIME(wi.`time`) AS hours
 				FROM (
@@ -254,7 +254,7 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 						w.rain
 					FROM weather w 
 					WHERE w.date BETWEEN '2020-03-01' AND '2020-11-01'
-						AND city is not NULL
+						AND city IS NOT NULL
 					) AS wi
 				) AS rain_day_hours
 			) AS sum_hours_rain
@@ -288,8 +288,8 @@ CREATE TABLE t_lenka_mackova_project_SQL_final(
 	LEFT JOIN covid_diff cdf 
 		ON ca.iso3 = cdf.iso
 	LEFT JOIN cov_tests te 
-			ON cdf.datum = te.datum
-			AND cdf.iso = te.iso
+		ON cdf.datum = te.datum
+		AND cdf.iso = te.iso
 	LEFT JOIN life_exp lex 
 		ON cdf.iso = lex.iso3
 	LEFT JOIN life_exp lifex 
